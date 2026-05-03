@@ -1,0 +1,86 @@
+Practice yaml code:
+
+trigger:
+- main
+
+
+pool:
+  vmImage: ubuntu-latest
+
+
+stages:
+
+
+# Stage 1 - Build
+- stage: Build
+  displayName: Build Stage
+  jobs:
+  - job: BuildJob
+    steps:
+    - script: echo "Building application..."
+      displayName: Build App
+
+
+# Stage 2 - Parallel Test Jobs
+- stage: Test
+  displayName: Test Stage
+  dependsOn: Build
+  jobs:
+
+
+  # Job 1
+  - job: UnitTests
+    displayName: Unit Tests
+    steps:
+    - script: echo "Running Unit Tests..."
+      displayName: Run Unit Tests
+
+
+  # Job 2
+  - job: IntegrationTests
+    displayName: Integration Tests
+    steps:
+    - script: echo "Running Integration Tests..."
+      displayName: Run Integration Tests
+
+
+  # Job 3
+  - job: SecurityTests
+    displayName: Security Tests
+    steps:
+    - script: echo "Running Security Tests..."
+      displayName: Run Security Tests
+
+
+# Stage 3 - Parallel Deploy Jobs
+- stage: Deploy
+  displayName: Deploy Stage
+  dependsOn: Test
+  jobs:
+
+
+  # Deploy to Dev
+  - job: DeployDev
+    displayName: Deploy to Dev
+    steps:
+    - script: echo "Deploying to Dev Environment..."
+      displayName: Deploy Dev
+
+
+  # Deploy to QA
+  - job: DeployQA
+    displayName: Deploy to QA
+    steps:
+    - script: echo "Deploying to QA Environment..."
+      displayName: Deploy QA
+
+
+# Stage 4 - Production
+- stage: Deploy_Prod
+  displayName: Deploy to Production
+  dependsOn: Deploy
+  jobs:
+  - job: ProdDeploy
+    steps:
+    - script: echo "Deploying to Production Environment..."
+      displayName: Deploy Prod
